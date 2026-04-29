@@ -1,58 +1,151 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# AP Hackathon - Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Backend for the Hackathon project built with **Laravel 13** + **PHP 8.4** + **SQL Server 2022**, fully Dockerized so any team member can spin up the environment regardless of their operating system.
 
-## About Laravel
+## Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Technology | Version |
+| ---------- | ------- |
+| PHP        | 8.4     |
+| Laravel    | 13.x    |
+| SQL Server | 2022    |
+| Nginx      | Alpine  |
+| Docker     | 24+     |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Prerequisites
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
+- [Make](https://www.gnu.org/software/make/) (included on Linux/Mac; on Windows use WSL2 or install via Chocolatey: `choco install make`)
+- Git
 
-## Learning Laravel
+> **Note:** You do not need PHP, Composer, or SQL Server installed locally. Everything runs inside Docker.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Quick Start
 
 ```bash
-composer require laravel/boost --dev
+# 1. Clone the repository
+git clone https://github.com/alfonsodalixap/AP.Hackathon.BE.git
+cd AP.Hackathon.BE
 
-php artisan boost:install
+# 2. FIRST TIME only (no Laravel code yet):
+make init
+
+# 3. Project already has Laravel code (subsequent runs):
+make install
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Done. The app will be available at **http://localhost:8000**
 
-## Contributing
+## Makefile Commands
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Run `make help` to see all available commands. Quick reference:
 
-## Code of Conduct
+### Docker
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+| Command         | Description                    |
+| --------------- | ------------------------------ |
+| `make build`    | Build Docker images            |
+| `make up`       | Start all containers           |
+| `make down`     | Stop and remove containers     |
+| `make restart`  | Restart all containers         |
+| `make status`   | Show container status          |
+| `make logs`     | Stream logs in real time       |
+| `make logs-app` | Stream app container logs only |
 
-## Security Vulnerabilities
+### Installation
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Command        | Description                                                      |
+| -------------- | ---------------------------------------------------------------- |
+| `make init`    | **First time only** — Create a fresh Laravel project from scratch |
+| `make install` | Full setup (composer install + migrate + key)                    |
 
-## License
+### Laravel / Artisan
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+| Command                            | Description                          |
+| ---------------------------------- | ------------------------------------ |
+| `make migrate`                     | Run migrations                       |
+| `make migrate-fresh`               | Drop all tables and re-run migrations |
+| `make seed`                        | Run seeders                          |
+| `make fresh`                       | migrate:fresh + seed                 |
+| `make cache`                       | Clear all Laravel caches             |
+| `make routes`                      | List all registered routes           |
+| `make tinker`                      | Open Tinker (interactive REPL)       |
+| `make test`                        | Run tests                            |
+| `make test-coverage`               | Run tests with coverage report       |
+| `make artisan c="make:model Post"` | Run any artisan command              |
+
+### Composer
+
+| Command                                             | Description              |
+| --------------------------------------------------- | ------------------------ |
+| `make composer-install`                             | Install dependencies     |
+| `make composer-update`                              | Update dependencies      |
+| `make composer-require p=spatie/laravel-permission` | Install a new package    |
+
+### Shell Access
+
+| Command           | Description                           |
+| ----------------- | ------------------------------------- |
+| `make shell`      | Terminal in the app container         |
+| `make shell-root` | Terminal as root in the app container |
+| `make db`         | Interactive SQL session on SQL Server |
+
+### Cleanup
+
+| Command      | Description                                      |
+| ------------ | ------------------------------------------------ |
+| `make clean` | Remove project containers, volumes, and images   |
+
+## Database Configuration
+
+The SQL Server connection is pre-configured in `.env.example`. Running `make install` or `make init` will automatically create the `hackathon` database.
+
+Default credentials:
+
+| Field    | Value             |
+| -------- | ----------------- |
+| Host     | `sqlserver`       |
+| Port     | `1433`            |
+| DB       | `hackathon`       |
+| User     | `sa`              |
+| Password | `Hackathon@2026!` |
+
+To connect from an external SQL client (DBeaver, Azure Data Studio, etc.) use `localhost:1433` with the same credentials.
+
+## Docker Structure
+
+```
+├── docker/
+│   ├── nginx/
+│   │   └── nginx.conf          # Nginx config
+│   └── php/
+│       ├── Dockerfile          # PHP 8.4 image + SQL Server drivers
+│       └── local.ini           # PHP config for development
+├── docker-compose.yml          # Service orchestration
+├── Makefile                    # Project commands
+└── .env.example                # Environment variables
+```
+
+## Troubleshooting
+
+**SQL Server container won't start:**
+SQL Server requires at least 2 GB of RAM allocated to Docker. Check your Docker Desktop resource settings.
+
+**Permission error on storage/:**
+
+```bash
+make shell-root
+chmod -R 775 storage bootstrap/cache
+chown -R laravel:www-data storage bootstrap/cache
+```
+
+**Reset everything from scratch:**
+
+```bash
+make clean
+make install
+```
+
+## Team
+
+Project developed for the AlixPartners Hackathon.
