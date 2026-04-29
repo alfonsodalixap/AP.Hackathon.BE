@@ -8,8 +8,9 @@ use RuntimeException;
 
 class SecEdgarService
 {
-    private const BASE_URL   = 'https://data.sec.gov';
-    private const USER_AGENT = 'AlixPartners Hackathon hackathon@alixpartners.com';
+    private const BASE_URL        = 'https://data.sec.gov';
+    private const TICKERS_URL     = 'https://www.sec.gov/files/company_tickers.json';
+    private const USER_AGENT      = 'AlixPartners Hackathon hackathon@alixpartners.com';
 
     public function getFinancials(string $ticker): CompanyFinancialsResult
     {
@@ -52,14 +53,25 @@ class SecEdgarService
         );
     }
 
+    private function http(): \Illuminate\Http\Client\PendingRequest
+    {
+        return Http::withHeaders([
+            'User-Agent'      => self::USER_AGENT,
+            'Accept-Encoding' => 'gzip, deflate',
+            'Accept'          => 'application/json',
+        ])->timeout(30)->withoutVerifying();
+    }
+
     private function resolveTicker(string $ticker): array
     {
-        $response = Http::withHeaders(['User-Agent' => self::USER_AGENT])
-            ->timeout(15)
-            ->get(self::BASE_URL . '/files/company_tickers.json');
+        try {
+            $response = $this->http()->get(self::TICKERS_URL);
+        } catch (\Exception $e) {
+            throw new RuntimeException('SEC EDGAR no disponible — ingrese los datos manualmente. (' . $e->getMessage() . ')', 502);
+        }
 
         if ($response->failed()) {
-            throw new RuntimeException('SEC EDGAR no disponible — ingrese los datos manualmente.', 502);
+            throw new RuntimeException('SEC EDGAR no disponible — status ' . $response->status(), 502);
         }
 
         foreach ($response->json() as $entry) {
@@ -73,12 +85,14 @@ class SecEdgarService
 
     private function fetchCompanyFacts(string $cik): array
     {
-        $response = Http::withHeaders(['User-Agent' => self::USER_AGENT])
-            ->timeout(15)
-            ->get(self::BASE_URL . "/api/xbrl/companyfacts/CIK{$cik}.json");
+        try {
+            $response = $this->http()->get(self::BASE_URL . "/api/xbrl/companyfacts/CIK{$cik}.json");
+        } catch (\Exception $e) {
+            throw new RuntimeException('No se pudo obtener los datos de la empresa. (' . $e->getMessage() . ')', 502);
+        }
 
         if ($response->failed()) {
-            throw new RuntimeException('No se pudo obtener los datos de la empresa desde SEC EDGAR.', 502);
+            throw new RuntimeException('No se pudo obtener los datos de la empresa — status ' . $response->status(), 502);
         }
 
         return $response->json();

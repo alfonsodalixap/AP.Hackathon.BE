@@ -26,7 +26,7 @@ class RosterAnalysisService
 
     public function analyze(UploadedFile $file): RosterAnalysisResult
     {
-        $raw = Excel::toArray([], $file)[0] ?? [];
+        $raw = Excel::toArray(new \stdClass(), $file)[0] ?? [];
 
         if (count($raw) < 2) {
             throw new RuntimeException('El archivo no contiene datos suficientes.');
@@ -49,7 +49,11 @@ class RosterAnalysisService
 
     private function parseSheet(array $raw): array
     {
-        $rawHeaders = array_map(fn($h) => trim(strtolower((string) $h)), $raw[0]);
+        // Normalize: lowercase, trim edges, collapse internal whitespace
+        $rawHeaders = array_map(
+            fn($h) => preg_replace('/\s+/', ' ', trim(strtolower((string) $h))),
+            $raw[0]
+        );
 
         $headers = [];
         foreach ($rawHeaders as $index => $raw_header) {
