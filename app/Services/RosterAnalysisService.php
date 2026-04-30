@@ -29,7 +29,7 @@ class RosterAnalysisService
         $raw = Excel::toArray(new \stdClass(), $file)[0] ?? [];
 
         if (count($raw) < 2) {
-            throw new RuntimeException('El archivo no contiene datos suficientes.');
+            throw new RuntimeException('The file does not contain enough data.');
         }
 
         [$headers, $rows] = $this->parseSheet($raw);
@@ -79,7 +79,7 @@ class RosterAnalysisService
         $missing = array_diff(self::REQUIRED, $mapped);
 
         if (!empty($missing)) {
-            throw new RuntimeException('Faltan columnas requeridas: ' . implode(', ', $missing));
+            throw new RuntimeException('Missing required columns: ' . implode(', ', $missing));
         }
     }
 

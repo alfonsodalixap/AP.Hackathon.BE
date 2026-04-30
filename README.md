@@ -126,6 +126,31 @@ To connect from an external SQL client (DBeaver, Azure Data Studio, etc.) use `l
 └── .env.example                # Environment variables
 ```
 
+## Testing
+
+```bash
+# Run all tests (uses SQLite in-memory — no Docker required)
+make test
+
+# Run with HTML coverage report
+make test-coverage
+
+# Run a specific test file
+php artisan test tests/Unit/Services/RosterAnalysisServiceTest.php
+```
+
+> Tests use an in-memory SQLite database defined in `phpunit.xml`, so you can run them without starting the Docker stack.
+
+Test suite overview:
+
+| Suite | File | What it tests |
+|-------|------|---------------|
+| Unit | `RosterAnalysisServiceTest` | Header normalisation, aggregations, blank rows, DB persistence |
+| Unit | `SecEdgarServiceTest` | Ticker resolution, EBITDA computation, latest 10-K selection, 404/502 errors |
+| Feature | `HealthControllerTest` | `GET /api/health` response |
+| Feature | `RosterControllerTest` | File upload, validation, grouping, DB persistence |
+| Feature | `FinancialsControllerTest` | Ticker lookup, financial data mapping, error codes |
+
 ## Troubleshooting
 
 **SQL Server container won't start:**

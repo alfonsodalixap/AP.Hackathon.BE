@@ -67,11 +67,11 @@ class SecEdgarService
         try {
             $response = $this->http()->get(self::TICKERS_URL);
         } catch (\Exception $e) {
-            throw new RuntimeException('SEC EDGAR no disponible — ingrese los datos manualmente. (' . $e->getMessage() . ')', 502);
+            throw new RuntimeException('SEC EDGAR unavailable — please enter the data manually. (' . $e->getMessage() . ')', 502);
         }
 
         if ($response->failed()) {
-            throw new RuntimeException('SEC EDGAR no disponible — status ' . $response->status(), 502);
+            throw new RuntimeException('SEC EDGAR unavailable — status ' . $response->status(), 502);
         }
 
         foreach ($response->json() as $entry) {
@@ -80,7 +80,7 @@ class SecEdgarService
             }
         }
 
-        throw new RuntimeException("Ticker '{$ticker}' no encontrado en SEC EDGAR.", 404);
+        throw new RuntimeException("Ticker '{$ticker}' was not found on SEC EDGAR.", 404);
     }
 
     private function fetchCompanyFacts(string $cik): array
@@ -88,11 +88,11 @@ class SecEdgarService
         try {
             $response = $this->http()->get(self::BASE_URL . "/api/xbrl/companyfacts/CIK{$cik}.json");
         } catch (\Exception $e) {
-            throw new RuntimeException('No se pudo obtener los datos de la empresa. (' . $e->getMessage() . ')', 502);
+            throw new RuntimeException('Could not retrieve company data. (' . $e->getMessage() . ')', 502);
         }
 
         if ($response->failed()) {
-            throw new RuntimeException('No se pudo obtener los datos de la empresa — status ' . $response->status(), 502);
+            throw new RuntimeException('Could not retrieve company data — status ' . $response->status(), 502);
         }
 
         return $response->json();
